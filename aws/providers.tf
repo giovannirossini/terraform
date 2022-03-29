@@ -6,8 +6,8 @@ terraform {
     }
   }
   backend "s3" {
-    bucket = "terraform-state-example"
-    key    = "example/terraform.tfstate"
+    bucket = "BUCKET_NAME"
+    key    = "test/terraform.tfstate"
     region = "REGION"
     access_key  = "ACCESS_KEY"
     secret_key  = "SECRET_KEY"
