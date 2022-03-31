@@ -7,7 +7,6 @@ variable "name" {
 variable "instance_id" {
   description = "The ID of the EC2 instance"
   type        = list(string)
-  default     = []
 }
 
 variable "instance_port" {
