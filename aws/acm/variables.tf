@@ -8,11 +8,12 @@ variable "domain" {
 }
 
 variable "zone_id" {
-  description = "Zone ID."
-  default     = "Z2P70J7EXAMPLE"
+  description = "Zone ID. Z2P70J7EXAMPLE"
+  type        = string
 }
 
 variable "method" {
   description = "The method of validation."
+  type        = string
   default     = "DNS"
 }
