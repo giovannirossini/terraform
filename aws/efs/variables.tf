@@ -7,13 +7,11 @@ variable "name" {
 variable "sg_id" {
   description = "The ID of the security group"
   type = list(string)
-  default = ["sg-xxxx"]
 }
 
 variable "subnets" {
   description = "The IDs of the subnets"
   type = list(string)
-  default = ["subnet-xxxx"]
 }
 
 variable "encrypted" {
