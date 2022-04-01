@@ -2,7 +2,7 @@ variable "domain" {
   description = "The domain name of the certificate."
   type        = string
   validation {
-    condition = can(regex("", var.domain))
+    condition     = can(regex("", var.domain))
     error_message = "The domain name is not allowed."
   }
 }
