@@ -1,6 +1,5 @@
 variable "domain_name" {
   description = "The domain name."
-  type = string
-  nullable  = false
-  default     = "example.com"
+  type        = string
+  nullable    = false
 }
