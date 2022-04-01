@@ -1,5 +1,5 @@
 # ElastiCache
-This is a Terraform configuration to deploy a Redis cluster on [Amazon ElastiCache][aws].
+This is a Terraform configuration to deploy a Redis cluster on Amazon ElastiCache.
 
 By default, it deploys a cluster with a cache.t3.micro instance.
 
