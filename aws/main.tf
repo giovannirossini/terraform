@@ -46,8 +46,22 @@ module "network" {
   source       = "./network"
   name         = "vpc-production"
   az           = ["a", "b", "c"]
-  vpc_cidr     = "100.0.0.0/16"
-  subnets_cidr = ["100.0.0.0/20", "100.0.16.0/20", "100.0.32.0/20"]
+  vpc_cidr     = "10.0.0.0/16"
+  subnets_cidr = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+}
+
+module "eks" {
+  source          = "./eks"
+  name            = "production"
+  node_group_name = "services"
+  number_of_nodes = 2
+  max_nodes       = 3
+  min_nodes       = 1
+  instance_types  = ["t3.medium"]
+  subnets         = module.network.subnet
+  sg_id           = module.network.sg_default_id
+  vpc_id          = module.network.vpc_id
+
 }
 
 module "ec2" {
