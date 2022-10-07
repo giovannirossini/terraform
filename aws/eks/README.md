@@ -46,6 +46,9 @@ Terraform will perform the following actions:
   # module.network.aws_vpc.vpc will be created
 
 Plan: 24 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + run-to-config = "aws eks --region us-east-1 update-kubeconfig --name development"
 ```
 
 Applying and wait to complete:
@@ -54,7 +57,7 @@ Applying and wait to complete:
 Apply complete! Resources: 24 added, 0 changed, 0 destroyed.
 ```
 
-To get access to the cluster (aws client required), run:
+To get access to the cluster (aws client required), run the command from the terraform output:
 
 ```shell
 $ aws eks --region us-east-1 update-kubeconfig --name development
