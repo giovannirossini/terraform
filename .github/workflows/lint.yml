@@ -12,8 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - id: modules
-        run: echo "::set-output name=matrix::$(find aws -type d -maxdepth 1 | jq -R -s -c 'split("\n")[:-1]')"
-  
+        run: echo "::set-output name=matrix::$(find aws/modules -type d -maxdepth 1 | jq -R -s -c 'split("\n")[:-1]')"
+
   tflint:
     runs-on: ubuntu-latest
     needs: list-modules
