@@ -1,6 +1,6 @@
 # Elastic Kubernetes Service
 
-Easy moduled way to running up a EKS on AWS.
+Easy moduled way to running up an EKS on AWS.
 
 ## Infrastructure Diagram
 <img src="../../images/eks.png">
