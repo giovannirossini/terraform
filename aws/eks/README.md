@@ -1,78 +1,84 @@
 # Elastic Kubernetes Service
-This is a Terraform configuration to deploy an EKS cluster on Amazon Elastic Kubernetes Service.
 
-By default, it deploys a cluster with two t3a.small  instance node.
+Easy moduled way to running up a EKS on AWS.
 
-## Implementation details
+## Infrastructure Diagram
+<img src="../../images/eks.png">
 
-This Terraform configuration creates:
+---
 
-- An EKS cluster
-- A Node Group
-- An EKS IAM policy
-- An EKS Security Group
-- An EKS Subnet
+## Deploying and Destroying
 
-You can use it combine with the [Network module](https://github.com/giovannirossini/terraform-aws/tree/main/network#network):
+```shell
+terraform apply --auto-approve
 
-```yaml
-module "network" {
-  source  = "./network/module/"
-}
+module.network.data.aws_region.current: Reading...
+module.network.data.aws_region.current: Read complete after 0s [id=us-east-1]
 
-module "eks" {
-  source          = "./eks"
-  name            = "production"
-  node_group_name = "services"
-  number_of_nodes = 2
-  max_nodes       = 3
-  min_nodes       = 1
-  instance_types  = ["t3.medium"]
-  subnets         = module.network.subnet
-  sg_id           = module.network.sg_default_id
-  vpc_id          = module.network.vpc_id
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # module.eks.aws_eks_cluster.cluster will be created
+  # module.eks.aws_eks_node_group.nodes will be created
+  # module.eks.aws_iam_role.eks will be created
+  # module.eks.aws_iam_role.eks_node will be created
+  # module.eks.aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly will be created
+  # module.eks.aws_iam_role_policy_attachment.AmazonEKSClusterPolicy will be created
+  # module.eks.aws_iam_role_policy_attachment.AmazonEKSVPCResourceController will be created
+  # module.eks.aws_iam_role_policy_attachment.AmazonEKSWorkerNodePolicy will be created
+  # module.eks.aws_iam_role_policy_attachment.AmazonEKS_CNI_Policy will be created
+  # module.eks.aws_security_group.cluster-sg will be created
+  # module.eks.aws_security_group_rule.cluster-ingress-workstation-https will be created
+  # module.network.aws_default_route_table.route will be created
+  # module.network.aws_internet_gateway.gw will be created
+  # module.network.aws_route_table_association.route-association[0] will be created
+  # module.network.aws_route_table_association.route-association[1] will be created
+  # module.network.aws_security_group.sg_alb will be created
+  # module.network.aws_security_group.sg_default will be created
+  # module.network.aws_security_group.sg_efs will be created
+  # module.network.aws_security_group.sg_elasticsearch will be created
+  # module.network.aws_security_group.sg_rds will be created
+  # module.network.aws_security_group.sg_redis will be created
+  # module.network.aws_subnet.subnet[0] will be created
+  # module.network.aws_subnet.subnet[1] will be created
+  # module.network.aws_vpc.vpc will be created
+
+Plan: 24 to add, 0 to change, 0 to destroy.
 ```
 
-<!-- BEGIN_TF_DOCS -->
-## Providers
+Applying and wait to complete:
 
-| Name | Version |
-|------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.6.0 |
+```shell
+Apply complete! Resources: 24 added, 0 changed, 0 destroyed.
+```
 
-## Resources
+To get access to the cluster (aws client required), run:
 
-| Name | Type |
-|------|------|
-| [aws_eks_cluster.cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_cluster) | resource |
-| [aws_eks_node_group.nodes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_node_group) | resource |
-| [aws_iam_role.eks](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
-| [aws_iam_role.eks_node](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
-| [aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [aws_iam_role_policy_attachment.AmazonEKSClusterPolicy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [aws_iam_role_policy_attachment.AmazonEKSWorkerNodePolicy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [aws_iam_role_policy_attachment.AmazonEKS_CNI_Policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [aws_subnet.eks_subnet](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
-| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
+```shell
+$ aws eks --region us-east-1 update-kubeconfig --name development
+```
 
-## Inputs
+To see the namespaces:
 
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_instance_types"></a> [instance\_types](#input\_instance\_types) | The instance types to use for the EKS cluster | `list(string)` | <pre>[<br>  "t3a.small"<br>]</pre> | no |
-| <a name="input_k8s_version"></a> [k8s\_version](#input\_k8s\_version) | The Kubernetes version to use for the cluster | `string` | `"1.21"` | no |
-| <a name="input_max_nodes"></a> [max\_nodes](#input\_max\_nodes) | The maximum number of nodes to use for the EKS cluster | `number` | `5` | no |
-| <a name="input_min_nodes"></a> [min\_nodes](#input\_min\_nodes) | The minimum number of nodes to use for the EKS cluster | `number` | `1` | no |
-| <a name="input_name"></a> [name](#input\_name) | The name of the cluster | `string` | `"eks-production"` | no |
-| <a name="input_node_group_name"></a> [node\_group\_name](#input\_node\_group\_name) | The name of the node group | `string` | `"workgroup"` | no |
-| <a name="input_number_of_nodes"></a> [number\_of\_nodes](#input\_number\_of\_nodes) | The number of nodes to start use for the EKS cluster | `number` | `3` | no |
-| <a name="input_sg_id"></a> [sg\_id](#input\_sg\_id) | The security group ID for the EKS cluster | `string` | n/a | yes |
-| <a name="input_subnets"></a> [subnets](#input\_subnets) | Subnets for the EKS cluster | `list(string)` | n/a | yes |
-| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The VPC ID for the EKS cluster | `string` | n/a | yes |
+```shell
+$ kubectl get ns
 
-## Outputs
+NAME              STATUS   AGE
+default           Active   31m
+kube-node-lease   Active   31m
+kube-public       Active   31m
+kube-system       Active   31m
+```
 
-| Name | Description |
-|------|-------------|
-| <a name="output_endpoint"></a> [endpoint](#output\_endpoint) | The cluster endpoint |
-<!-- END_TF_DOCS -->
+To destroy everything:
+
+```shell
+$ terraform destroy --auto-approve
+
+Plan: 0 to add, 0 to change, 24 to destroy.
+...
+
+Destroy complete! Resources: 24 destroyed.
+```

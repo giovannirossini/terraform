@@ -11,7 +11,7 @@ This Terraform configuration creates:
 You can use it combine with [Network Module](https://github.com/giovannirossini/terraform/tree/main/aws/network):
 ```yaml
 module "network" {
-  source  = "./network/module/"
+  source  = "./network"
 }
 
 module "ec2" {

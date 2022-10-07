@@ -1,8 +1,8 @@
 resource "aws_security_group" "sg_default" {
-  depends_on  = [aws_vpc.vpc_production]
+  depends_on  = [aws_vpc.vpc]
   name        = "SSH"
   description = "Allow SHH inbound traffic"
-  vpc_id      = aws_vpc.vpc_production.id
+  vpc_id      = aws_vpc.vpc.id
   ingress {
     description = "SSH"
     protocol    = "tcp"
@@ -20,10 +20,10 @@ resource "aws_security_group" "sg_default" {
 }
 
 resource "aws_security_group" "sg_alb" {
-  depends_on  = [aws_vpc.vpc_production]
+  depends_on  = [aws_vpc.vpc]
   name        = "Application Load Balance"
   description = "Allow ALB traffic"
-  vpc_id      = aws_vpc.vpc_production.id
+  vpc_id      = aws_vpc.vpc.id
   ingress {
     description = "LoadBalancer"
     protocol    = "tcp"
@@ -41,10 +41,10 @@ resource "aws_security_group" "sg_alb" {
 }
 
 resource "aws_security_group" "sg_elasticsearch" {
-  depends_on  = [aws_vpc.vpc_production]
+  depends_on  = [aws_vpc.vpc]
   description = "Allows access to Elasticsearch Service"
   name        = "Elasticsearch Service"
-  vpc_id      = aws_vpc.vpc_production.id
+  vpc_id      = aws_vpc.vpc.id
   ingress {
     description = "VPC"
     protocol    = "tcp"
@@ -61,10 +61,10 @@ resource "aws_security_group" "sg_elasticsearch" {
 }
 
 resource "aws_security_group" "sg_efs" {
-  depends_on  = [aws_vpc.vpc_production]
+  depends_on  = [aws_vpc.vpc]
   description = "Allow access to EFS"
   name        = "EFS"
-  vpc_id      = aws_vpc.vpc_production.id
+  vpc_id      = aws_vpc.vpc.id
   ingress {
     description = "VPC"
     protocol    = "tcp"
@@ -81,10 +81,10 @@ resource "aws_security_group" "sg_efs" {
 }
 
 resource "aws_security_group" "sg_redis" {
-  depends_on  = [aws_vpc.vpc_production]
+  depends_on  = [aws_vpc.vpc]
   description = "Allow access to Redis "
   name        = "Redis"
-  vpc_id      = aws_vpc.vpc_production.id
+  vpc_id      = aws_vpc.vpc.id
   ingress {
     description = "VPC"
     protocol    = "tcp"
@@ -101,10 +101,10 @@ resource "aws_security_group" "sg_redis" {
 }
 
 resource "aws_security_group" "sg_rds" {
-  depends_on  = [aws_vpc.vpc_production]
+  depends_on  = [aws_vpc.vpc]
   description = "Allow access to RDS "
   name        = "RDS"
-  vpc_id      = aws_vpc.vpc_production.id
+  vpc_id      = aws_vpc.vpc.id
   ingress {
     description = "VPC"
     protocol    = "tcp"
@@ -118,4 +118,4 @@ resource "aws_security_group" "sg_rds" {
     protocol    = "-1"
     cidr_blocks = [var.public_cidr]
   }
-}   
+}

@@ -19,20 +19,22 @@ resource "aws_rds_cluster" "cluster" {
   port                    = var.port
   database_name           = var.db_name
   master_username         = var.db_user
-  master_password         = random_password.password.result
+  master_password         = var.db_password != null ? var.db_password : random_password.password.result
   engine_mode             = var.mode
   deletion_protection     = var.protection
   backup_retention_period = var.retention_period
   preferred_backup_window = var.maintenance
+  skip_final_snapshot     = var.skip_final_snapshot
 }
 
 resource "aws_rds_cluster_instance" "instances" {
-  depends_on         = [aws_rds_cluster.cluster]
-  count              = length(var.az)
-  identifier         = var.name
-  cluster_identifier = aws_rds_cluster.cluster.id
-  instance_class     = var.instance_class
-  engine             = aws_rds_cluster.cluster.engine
-  engine_version     = aws_rds_cluster.cluster.engine_version
-  availability_zone  = join("", ["${data.aws_region.current.name}", "${element(var.az, count.index)}"])
+  depends_on          = [aws_rds_cluster.cluster]
+  count               = length(var.az)
+  identifier          = var.name
+  cluster_identifier  = aws_rds_cluster.cluster.id
+  instance_class      = var.instance_class
+  engine              = aws_rds_cluster.cluster.engine
+  engine_version      = aws_rds_cluster.cluster.engine_version
+  publicly_accessible = var.publicly_accessible
+  availability_zone   = join("", ["${data.aws_region.current.name}", "${element(var.az, count.index)}"])
 }

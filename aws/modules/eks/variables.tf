@@ -1,7 +1,13 @@
 variable "name" {
   description = "The name of the cluster"
   type        = string
-  default     = "eks-production"
+  default     = "eks-development"
+}
+
+variable "az" {
+  description = "The name of the cluster"
+  type        = list(string)
+  default     = ["a", "b", "c"]
 }
 
 variable "node_group_name" {
@@ -15,10 +21,15 @@ variable "subnets" {
   type        = list(string)
 }
 
+variable "subnets_cidr" {
+  description = "Subnets for the EKS cluster"
+  type        = list(string)
+}
+
 variable "k8s_version" {
   description = "The Kubernetes version to use for the cluster"
   type        = string
-  default     = "1.21"
+  default     = "1.23"
 }
 
 variable "vpc_id" {
@@ -26,8 +37,8 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "sg_id" {
-  description = "The security group ID for the EKS cluster"
+variable "vpc_cidr" {
+  description = "The VPC ID for the EKS cluster"
   type        = string
 }
 

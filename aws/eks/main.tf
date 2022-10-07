@@ -1,44 +1,21 @@
-resource "aws_eks_cluster" "cluster" {
-  depends_on = [aws_iam_role_policy_attachment.AmazonEKSClusterPolicy]
-  name       = var.name
-  version    = var.k8s_version
-  role_arn   = aws_iam_role.eks.arn
-
-  vpc_config {
-    subnet_ids         = var.subnets
-    security_group_ids = [var.sg_id]
-  }
-
-  kubernetes_network_config {
-    service_ipv4_cidr = "172.16.0.0/12"
-  }
-
-  tags = {
-    Name = var.name
-  }
+module "network" {
+  source       = "../modules/network"
+  name         = "kubernetes-development"
+  az           = ["a", "b"]
+  vpc_cidr     = "10.0.0.0/16"
+  subnets_cidr = ["10.0.1.0/24", "10.0.2.0/24"]
 }
 
-resource "aws_eks_node_group" "nodes" {
-  depends_on = [
-    aws_iam_role_policy_attachment.AmazonEKSWorkerNodePolicy,
-    aws_iam_role_policy_attachment.AmazonEKS_CNI_Policy,
-    aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly,
-    aws_subnet.eks_subnet
-  ]
-  node_role_arn   = aws_iam_role.eks_node.arn
-  cluster_name    = aws_eks_cluster.cluster.name
-  node_group_name = var.node_group_name
-  subnet_ids      = aws_subnet.eks_subnet[*].id
-  instance_types  = var.instance_types
-
-  scaling_config {
-    desired_size = var.number_of_nodes
-    max_size     = var.max_nodes
-    min_size     = var.min_nodes
-  }
-
-  tags = {
-    Name = "${var.node_group_name}-${aws_eks_cluster.cluster.name}"
-
-  }
+module "eks" {
+  source          = "../modules/eks"
+  name            = "development"
+  az              = ["a", "b"]
+  vpc_id          = module.network.vpc_id
+  vpc_cidr        = module.network.vpc_cidr
+  subnets_cidr    = module.network.subnet_cidr
+  subnets         = module.network.subnet
+  min_nodes       = 1
+  max_nodes       = 3
+  number_of_nodes = 2
+  instance_types  = ["t3.large"]
 }

@@ -26,6 +26,12 @@ variable "db_user" {
   default     = "root"
 }
 
+variable "db_password" {
+  description = "The password for the database user"
+  type        = string
+  default     = null
+}
+
 variable "instance_class" {
   description = "The instance class for the RDS instance"
   type        = string
@@ -92,4 +98,16 @@ variable "engine_version" {
   description = "The version of enginee"
   type        = string
   default     = "5.7.mysql_aurora.2.07.2"
+}
+
+variable "skip_final_snapshot" {
+  description = "Skip final snapshot"
+  type        = bool
+  default     = false
+}
+
+variable "publicly_accessible" {
+  description = "Public access through endpoint"
+  type        = bool
+  default     = true
 }

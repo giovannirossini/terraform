@@ -15,10 +15,10 @@ This Terraform configuration creates:
 
 ```yaml
 module "network" {
-  source        = "./network/module/"
+  source        = "./network"
   name          = "vpc-production"
   az            = ["a","b","c"]
-  vpc_cidr      = ["100.0.0.0/16"]
+  vpc_cidr      = "100.0.0.0/16"
   subnets_cidr  = ["100.0.1.0/20","100.0.2.0/20","100.0.3.0/20"]
 }
 ```

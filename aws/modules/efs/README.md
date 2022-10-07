@@ -15,7 +15,7 @@ You can use it combine with the [Network module](https://github.com/giovanniross
 
 ```yaml
 module "network" {
-  source  = "./network/module/"
+  source  = "./network"
 }
 
 module "efs" {

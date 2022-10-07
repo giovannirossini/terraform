@@ -8,7 +8,7 @@ resource "aws_iam_role" "eks" {
       Principal = {
         Service = "eks.amazonaws.com"
       }
-    }]
+    }],
     Version = "2012-10-17"
   })
 }
@@ -23,7 +23,7 @@ resource "aws_iam_role" "eks_node" {
       Principal = {
         Service = "ec2.amazonaws.com"
       }
-    }]
+    }],
     Version = "2012-10-17"
   })
 }
@@ -46,4 +46,9 @@ resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly" {
 resource "aws_iam_role_policy_attachment" "AmazonEKSClusterPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
   role       = aws_iam_role.eks.name
+}
+
+resource "aws_iam_role_policy_attachment" "AmazonEKSVPCResourceController" {
+  role       = aws_iam_role.eks.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
 }
