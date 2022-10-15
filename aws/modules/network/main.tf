@@ -36,7 +36,7 @@ resource "aws_subnet" "subnet" {
   depends_on              = [aws_vpc.vpc]
   count                   = length(var.subnets_cidr)
   vpc_id                  = aws_vpc.vpc.id
-  availability_zone       = join("", ["${data.aws_region.current.name}", "${element(var.az, count.index)}"])
+  availability_zone       = join("", [data.aws_region.current.name, element(var.az, count.index)])
   cidr_block              = element(var.subnets_cidr, count.index)
   map_public_ip_on_launch = true
   tags = {
