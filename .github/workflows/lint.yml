@@ -10,7 +10,7 @@ jobs:
     outputs:
       matrix: ${{ steps.modules.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: modules
         run: echo "::set-output name=matrix::$(find aws -type d -maxdepth 2 | jq -R -s -c 'split("\n")[:-1]')"
 
@@ -23,7 +23,7 @@ jobs:
         modules: ${{ fromJson(needs.list-modules.outputs.matrix) }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       name: Checkout source code
 
     - uses: terraform-linters/setup-tflint@v1
