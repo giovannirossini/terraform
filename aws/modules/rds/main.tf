@@ -13,7 +13,7 @@ resource "aws_rds_cluster" "cluster" {
   cluster_identifier      = var.name
   engine                  = var.engine
   engine_version          = var.engine_version
-  availability_zones      = [join("", ["${data.aws_region.current.name}", "${element(var.az, 0)}"])]
+  availability_zones      = [join("", [data.aws_region.current.name, element(var.az, 0)])]
   vpc_security_group_ids  = [var.sg_id]
   db_subnet_group_name    = aws_db_subnet_group.default.name
   port                    = var.port
@@ -36,5 +36,5 @@ resource "aws_rds_cluster_instance" "instances" {
   engine              = aws_rds_cluster.cluster.engine
   engine_version      = aws_rds_cluster.cluster.engine_version
   publicly_accessible = var.publicly_accessible
-  availability_zone   = join("", ["${data.aws_region.current.name}", "${element(var.az, count.index)}"])
+  availability_zone   = join("", [data.aws_region.current.name, element(var.az, count.index)])
 }

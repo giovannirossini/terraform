@@ -10,9 +10,9 @@ jobs:
     outputs:
       matrix: ${{ steps.modules.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: modules
-        run: echo "::set-output name=matrix::$(find aws/modules -type d -maxdepth 1 | jq -R -s -c 'split("\n")[:-1]')"
+        run: echo "::set-output name=matrix::$(find aws -type d -maxdepth 2 -not -path 'aws' -not -path '*/modules' | jq -R -s -c 'split("\n")[:-1]')"
 
   tflint:
     runs-on: ubuntu-latest
@@ -23,10 +23,10 @@ jobs:
         modules: ${{ fromJson(needs.list-modules.outputs.matrix) }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       name: Checkout source code
 
-    - uses: terraform-linters/setup-tflint@v1
+    - uses: terraform-linters/setup-tflint@v2
       name: Setup TFLint
       with:
         tflint_version: latest

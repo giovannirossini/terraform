@@ -1,5 +1,6 @@
 variable "name" {
   description = "The name for the resource"
+  type        = string
   default     = "production"
 }
 
