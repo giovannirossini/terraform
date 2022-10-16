@@ -1,0 +1,14 @@
+version: 0.1
+
+projects:
+  - path: aws/modules/acm
+  - path: aws/modules/efs
+  - path: aws/modules/elasticache
+  - path: aws/modules/opensearch
+  - path: aws/modules/route53
+  - path: aws/modules/alb
+  - path: aws/modules/ec2
+  - path: aws/modules/eks
+  - path: aws/modules/network
+  - path: aws/modules/rds
+  - path: aws/eks
