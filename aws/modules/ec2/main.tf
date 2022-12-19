@@ -21,7 +21,7 @@ resource "aws_instance" "ec2" {
   count                  = var.instances_number
   ami                    = var.ami != "" ? var.ami : data.aws_ami.ubuntu.id
   instance_type          = var.instance_type
-  key_name               = aws_key_pair.sshkey.key_name
+  key_name               = var.ssh_key != "" ? var.ssh_key : aws_key_pair.sshkey.key_name
   availability_zone      = join("", [data.aws_region.current.name, element(var.az, 0)])
   tenancy                = "default"
   subnet_id              = var.subnet_id

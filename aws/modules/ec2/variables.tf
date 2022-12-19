@@ -101,3 +101,9 @@ variable "encrypted" {
     error_message = "The ebs_optimized value must be a boolean. True or False expected."
   }
 }
+
+variable "ssh_key" {
+  description = "The SSH key name"
+  type        = string
+  default     = ""
+}
