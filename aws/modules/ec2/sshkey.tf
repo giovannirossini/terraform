@@ -5,7 +5,7 @@ resource "tls_private_key" "ssh" {
 
 resource "local_file" "ssh_private_key" {
   content         = tls_private_key.ssh.private_key_pem
-  filename        = join(".", var.name != "" ? var.name : "terraform", "pem")
+  filename        = join(".", [var.name != "" ? var.name : "terraform", "pem"])
   file_permission = "0600"
 }
 
