@@ -1,5 +1,5 @@
 module "network" {
-  source       = "../modules/network"
+  source       = "git@github.com:giovannirossini/terraform.git//aws/modules/network"
   name         = "kubernetes-development"
   az           = ["a", "b"]
   vpc_cidr     = "10.0.0.0/16"
@@ -7,7 +7,7 @@ module "network" {
 }
 
 module "eks" {
-  source          = "../modules/eks"
+  source          = "git@github.com:giovannirossini/terraform.git//aws/modules/eks"
   name            = "development"
   vpc_id          = module.network.vpc_id
   subnets         = module.network.subnet
