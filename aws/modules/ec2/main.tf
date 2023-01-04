@@ -17,16 +17,15 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_instance" "ec2" {
-  depends_on             = [aws_key_pair.sshkey]
-  count                  = var.instances_number
+  count                  = 1
   ami                    = var.ami != "" ? var.ami : data.aws_ami.ubuntu.id
   instance_type          = var.instance_type
-  key_name               = var.ssh_key != "" ? var.ssh_key : aws_key_pair.sshkey.key_name
+  key_name               = var.ssh_key
   availability_zone      = join("", [data.aws_region.current.name, element(var.az, 0)])
   tenancy                = "default"
   subnet_id              = var.subnet_id
   ebs_optimized          = var.ebs_optimized
-  vpc_security_group_ids = [var.sg_id]
+  vpc_security_group_ids = var.sg_id
   source_dest_check      = true
   monitoring             = var.monitoring
   root_block_device {
@@ -38,13 +37,15 @@ resource "aws_instance" "ec2" {
   tags = {
     Name = "${var.name}-${count.index + 1}"
   }
+  volume_tags = {
+    Name = "${var.name}-${count.index + 1}"
+  }
 }
 
 resource "aws_eip" "eip" {
-  depends_on = [aws_instance.ec2]
-  count      = length(aws_instance.ec2[*].id)
-  instance   = aws_instance.ec2[count.index].id
-  vpc        = true
+  count    = length(aws_instance.ec2[*].id)
+  instance = aws_instance.ec2[count.index].id
+  vpc      = true
   tags = {
     Name = "${var.name}-${count.index + 1}"
   }

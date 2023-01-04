@@ -46,11 +46,11 @@ variable "instances_number" {
 
 variable "sg_id" {
   description = "The security group ID"
-  type        = string
-  validation {
-    condition     = can(regex("^sg-", var.sg_id))
-    error_message = "The sg_id value must be a valid Security Group id. Starting with \"sg-\"."
-  }
+  type        = list(string)
+  # validation {
+  #   condition     = can(regex("^sg-", var.sg_id))
+  #   error_message = "The sg_id value must be a valid Security Group id. Starting with \"sg-\"."
+  # }
 }
 
 variable "subnet_id" {
@@ -65,7 +65,7 @@ variable "subnet_id" {
 variable "ebs_optimized" {
   description = "The EBS optimized"
   type        = bool
-  default     = true
+  default     = false
   validation {
     condition     = can(regex("(true)||(false)", var.ebs_optimized))
     error_message = "The ebs_optimized value must be a boolean. True or False expected."
