@@ -17,7 +17,7 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_instance" "ec2" {
-  count                  = 1
+  count                  = var.instances_number
   ami                    = var.ami != "" ? var.ami : data.aws_ami.ubuntu.id
   instance_type          = var.instance_type
   key_name               = var.ssh_key
