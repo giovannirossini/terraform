@@ -15,7 +15,7 @@ This Terraform configuration creates:
 
 ```yaml
 module "network" {
-  source        = "./network"
+  source        = "git@github.com:giovannirossini/terraform.git//aws/modules/network"
   name          = "vpc-production"
   az            = ["a","b","c"]
   vpc_cidr      = "100.0.0.0/16"

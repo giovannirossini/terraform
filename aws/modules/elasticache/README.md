@@ -15,11 +15,11 @@ You can use it combine with the [Network module](https://github.com/giovanniross
 
 ```yaml
 module "network" {
-  source  = "./network"
+  source  = "git@github.com:giovannirossini/terraform.git//aws/modules/network"
 }
 
 module "elasticache" {
-  source          = "./elasticache/module/"
+  source          = "git@github.com:giovannirossini/terraform.git//aws/modules/elasticache"
   subnet          = module.network.subnet
   sg_id           = module.network.sg_redis_id
   number_of_nodes = 2

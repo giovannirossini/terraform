@@ -16,11 +16,11 @@ You can use it combine with the [Network module](https://github.com/giovanniross
 
 ```yaml
 module "network" {
-  source  = "./network"
+  source  = "git@github.com:giovannirossini/terraform.git//aws/modules/network"
 }
 
 module "mysql" {
-  source          = "./rds/module/"
+  source          = "git@github.com:giovannirossini/terraform.git//aws/modules/rds"
   name            = "production"
   db_name         = "test"
   db_user         = "admin"

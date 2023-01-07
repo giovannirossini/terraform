@@ -14,11 +14,11 @@ You can use it combine with the [Network module](https://github.com/giovanniross
 
 ```yaml
 module "network" {
-  source  = "./network"
+  source  = "git@github.com:giovannirossini/terraform.git//aws/modules/network"
 }
 
 module "elasticsearch" {
-  source         = "./opensearch"
+  source         = "git@github.com:giovannirossini/terraform.git//aws/modules/opensearch"
   domain         = "es-production"
   instance_type  = "t3.small.search"
   instance_count = 1

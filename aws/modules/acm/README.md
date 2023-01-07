@@ -11,7 +11,7 @@ This Terraform configuration creates:
 
 ```yaml
 module "certificate-manager" {
-  source  = "./acm"
+  source  = "git@github.com:giovannirossini/terraform.git//aws/modules/acm"
   zone_id = module.route53.zone_id
   domain  = "example.com"
 }

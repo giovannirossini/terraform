@@ -11,11 +11,11 @@ This Terraform configuration creates:
 You can use it combine with [Network Module](https://github.com/giovannirossini/terraform/tree/main/aws/network):
 ```yaml
 module "network" {
-  source  = "./network"
+  source  = "git@github.com:giovannirossini/terraform.git//aws/modules/network"
 }
 
 module "ec2" {
-  source            = "./ec2"
+  source            = "git@github.com:giovannirossini/terraform.git//aws/modules/ec2"
   name              = "application"
   instance_type     = "t3a.micro"
   volume_size       = 8

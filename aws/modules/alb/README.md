@@ -12,7 +12,7 @@ This Terraform configuration creates:
 
 ```yaml
 module "loadbalancer" {
-  source        = "./alb"
+  source        = "git@github.com:giovannirossini/terraform.git//aws/modules/alb"
   name          = "frontend"
   instance_id   = [for i in module.backend.ec2_id : i]
   sg_id         = [module.network.sg_alb_id]

@@ -11,7 +11,7 @@ This Terraform configuration creates:
 
 ```yaml
 module "route53" {
-  source = "./route53/module/"
+  source = "git@github.com:giovannirossini/terraform.git//aws/modules/route53"
   domain_name = "example.com"
 }
 ```

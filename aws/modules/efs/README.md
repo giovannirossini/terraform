@@ -15,11 +15,11 @@ You can use it combine with the [Network module](https://github.com/giovanniross
 
 ```yaml
 module "network" {
-  source  = "./network"
+  source  = "git@github.com:giovannirossini/terraform.git//aws/modules/network"
 }
 
 module "efs" {
-  source        = "./efs"
+  source        = "git@github.com:giovannirossini/terraform.git//aws/modules/efs"
   name          = "production"
   subnets       = [for i in module.network.subnet: i]
   sg_id         = [module.network.sg_efs_id]
