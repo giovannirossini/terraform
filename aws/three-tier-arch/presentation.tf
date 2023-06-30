@@ -1,69 +1,77 @@
-# Create S3 bucket for hosting the website
-resource "aws_s3_bucket" "presentation_bucket" {
-  bucket = "my-website-bucket-for-three-tier-arch" # Update with your desired bucket name
-}
+data "aws_region" "current" {}
 
-resource "aws_s3_bucket_ownership_controls" "ownership" {
-  bucket = aws_s3_bucket.presentation_bucket.id
-  rule {
-    object_ownership = "BucketOwnerPreferred"
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
   }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
 }
 
-resource "aws_s3_bucket_public_access_block" "access_block" {
-  bucket = aws_s3_bucket.presentation_bucket.id
+resource "aws_instance" "ec2" {
+  count                  = 2
+  ami                    = data.aws_ami.ubuntu.id
+  instance_type          = "t3a.micro"
+  tenancy                = "default"
+  ebs_optimized          = false
+  source_dest_check      = true
+  subnet_id              = element(module.network.private_subnet, count.index)
+  vpc_security_group_ids = [aws_security_group.instance_sg.id]
+  iam_instance_profile   = aws_iam_instance_profile.profile.name
+  root_block_device {
+    volume_size           = 8
+    volume_type           = "gp3"
+    delete_on_termination = true
+    encrypted             = false
+  }
+  tags = {
+    Name = "${local.name}-${local.component}-${count.index + 1}"
+  }
+  volume_tags = {
+    Name = "${local.name}-${local.component}-${count.index + 1}"
+  }
 
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
-}
-
-resource "aws_s3_bucket_acl" "example" {
-  depends_on = [
-    aws_s3_bucket_ownership_controls.ownership,
-    aws_s3_bucket_public_access_block.access_block,
-  ]
-
-  bucket = aws_s3_bucket.presentation_bucket.id
-  acl    = "public-read"
-}
-
-# Configure S3 bucket policy to allow public access
-resource "aws_s3_bucket_policy" "presentation_bucket_policy" {
-  bucket = aws_s3_bucket.presentation_bucket.id
-
-  policy = templatefile("${path.module}/templates/s3.json", {
-    bucket = aws_s3_bucket.presentation_bucket.id
+  user_data = templatefile("${path.module}/templates/user_data", {
+    lambda_name = "/teste"
   })
 }
 
-resource "aws_s3_bucket_website_configuration" "web" {
-  bucket = aws_s3_bucket.presentation_bucket.id
-
-  index_document {
-    suffix = "index.html"
-  }
-
-  error_document {
-    key = "error.html"
-  }
+module "loadbalancer" {
+  source      = "git@github.com:giovannirossini/terraform.git//aws/modules/alb"
+  name        = "${local.name}-${local.component}"
+  instance_id = [for i in aws_instance.ec2[*].id : i]
+  sg_id       = [aws_security_group.sg_alb.id]
+  vpc_id      = module.network.vpc_id
+  subnets     = module.network.public_subnet
 }
 
-resource "aws_s3_object" "index" {
-  bucket = aws_s3_bucket.presentation_bucket.id
-  key    = "index.html"
-  source = "${path.module}/src/s3/index.html"
-  # templatefile("${path.module}/src/s3/index.html", {
-  #   lambda_name = aws_lambda_function_url.backend_lambda_latest.function_url
-  # })
+resource "aws_iam_policy" "lambda_access_policy" {
+  name        = "LambdaAccessPolicy"
+  description = "Policy to allow access to all Lambda functions"
 
-  content_type = "text/html"
+  policy = file("${path.module}/templates/frontend.json")
 }
 
-resource "aws_s3_object" "error" {
-  bucket       = aws_s3_bucket.presentation_bucket.id
-  key          = "error.html"
-  source       = "${path.module}/src/s3/error.html"
-  content_type = "text/html"
+resource "aws_iam_role" "instance_role" {
+  name = "Frontend2Backend"
+
+  assume_role_policy = file("${path.module}/templates/ec2.json")
+}
+
+resource "aws_iam_role_policy_attachment" "instance_policy_attachment" {
+  role       = aws_iam_role.instance_role.name
+  policy_arn = aws_iam_policy.lambda_access_policy.arn
+}
+
+resource "aws_iam_instance_profile" "profile" {
+  name = "${local.name}-${local.component}"
+  role = aws_iam_role.instance_role.name
 }

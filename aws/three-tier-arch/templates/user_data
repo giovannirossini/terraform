@@ -1,0 +1,107 @@
+#!/bin/bash
+apt-get update
+apt-get install -y nginx snapd
+snap install amazon-ssm-agent --classic
+systemctl enable snap.amazon-ssm-agent.amazon-ssm-agent
+systemctl start snap.amazon-ssm-agent.amazon-ssm-agent
+cat > /var/www/html/index.html <<EOF
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Website - Three-Tier Architecture</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f1f1f1;
+      padding: 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+
+    h1 {
+      color: #007bff;
+    }
+
+    p {
+      margin-top: 10px;
+    }
+
+    .status-button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      color: #fff;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+      background-color: #007bff;
+    }
+
+    .status-button-green {
+      background-color: #28a745;
+    }
+
+    .status-button-red {
+      background-color: #dc3545;
+    }
+
+    .status-button-yellow {
+      background-color: #ffc107;
+    }
+  </style>
+  <script>
+    function testConnection() {
+      var button = document.getElementById('statusButton');
+      button.disabled = true;
+      button.innerText = 'Loading...';
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', "${lambda_name}", true);
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          button.classList.remove('status-button-red', 'status-button-yellow');
+          button.classList.add('status-button-green');
+          button.innerText = 'Connection Successful';
+        } else if (xhr.status >= 400 && xhr.status < 500) {
+          button.classList.remove('status-button-green', 'status-button-yellow');
+          button.classList.add('status-button-red');
+          button.innerText = 'Client Error';
+        } else if (xhr.status >= 500 && xhr.status < 600) {
+          button.classList.remove('status-button-green', 'status-button-red');
+          button.classList.add('status-button-yellow');
+          button.innerText = 'Server Error';
+        } else {
+          button.classList.remove('status-button-green', 'status-button-red', 'status-button-yellow');
+          button.innerText = 'Unknown Error';
+        }
+      };
+      xhr.onerror = function() {
+        button.classList.remove('status-button-green', 'status-button-yellow');
+        button.classList.add('status-button-red');
+        button.innerText = 'Error';
+      };
+      xhr.send();
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to My Website</h1>
+    <p>This is the home page of my website, demonstrating a three-tier architecture.</p>
+    <p>The three tiers of this architecture are:</p>
+    <ol>
+      <li><strong>Presentation Tier:</strong> This tier handles the user interface and client-side interactions.</li>
+      <li><strong>Application Tier:</strong> This tier contains the business logic and processing of the application.</li>
+      <li><strong>Data Tier:</strong> This tier is responsible for storing and retrieving data.</li>
+    </ol>
+    <button id="statusButton" class="status-button" onclick="testConnection()">Test Connection</button>
+  </div>
+</body>
+</html>
+EOF
+service nginx restart

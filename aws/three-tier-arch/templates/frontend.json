@@ -1,0 +1,34 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowLambdaInvocation",
+      "Effect": "Allow",
+      "Action": [
+        "lambda:InvokeFunction"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SSMPermissions",
+      "Effect": "Allow",
+      "Action": [
+        "ssmmessages:*",
+        "ssm:UpdateInstanceInformation",
+        "ec2messages:AcknowledgeMessage",
+        "ec2messages:SendReply",
+        "ec2messages:GetEndpoint",
+        "ec2:DescribeInstanceStatus"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "EC2Permissions",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeInstances"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
