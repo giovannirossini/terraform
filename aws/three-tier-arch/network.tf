@@ -27,7 +27,7 @@ resource "aws_security_group" "sg_alb" {
   }
 }
 
-resource "aws_security_group" "instance_sg" {
+resource "aws_security_group" "sg_instance" {
   name        = "Instance Security Group"
   description = "Allow incoming traffic from ALB"
   vpc_id      = module.network.vpc_id

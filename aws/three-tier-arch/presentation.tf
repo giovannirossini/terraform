@@ -24,7 +24,7 @@ resource "aws_instance" "ec2" {
   ebs_optimized          = false
   source_dest_check      = true
   subnet_id              = element(module.network.private_subnet, count.index)
-  vpc_security_group_ids = [aws_security_group.instance_sg.id]
+  vpc_security_group_ids = [aws_security_group.sg_instance.id]
   iam_instance_profile   = aws_iam_instance_profile.profile.name
   root_block_device {
     volume_size           = 8
